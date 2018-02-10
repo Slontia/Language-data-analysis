@@ -1,19 +1,11 @@
-fitDataFromXls("gdp", @gdpFit);
-fitDataFromXls("pop", @popFit);
-over = sprintf('over');
-disp(over)
+distMat = [];
+lang2Mat = [];
+curYear = 2015;
 
-function fitDataFromXls(sheetName, fitHandle)
-    data = xlsread("data.xlsx", sheetName);
-    dataSize = size(data, 1);
+fitData();
 
-    % load year axis
-    years = data(1,:);
-
-    % load year axis
-    for regionNo = 2:dataSize
-        regionDatas = data(regionNo, :);
-        fitHandle(years, regionDatas, regionNo); 
-        pause(0.3);
-    end
+function fitData()
+    fitDataFromXls("gdp", @gdpFit);
+    fitDataFromXls("pop", @popFit);
+    fprintf('over\n');
 end

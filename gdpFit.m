@@ -1,8 +1,8 @@
 function gdpFit(yearsX, gdpsY, titleName)
     [yearsX, gdpsY] = initForFit(yearsX, gdpsY);
-    gdpFunc = polyfit(yearsX, gdpsY, 2);
+    gdpsFit = polyfit(yearsX, gdpsY, 2);
     gdpsFitX = 1980:2065;
-    gdpsFitY = polyval(gdpFunc, gdpsFitX);
+    gdpsFitY = polyval(gdpsFit, gdpsFitX);
     clf;
     plot(yearsX, gdpsY, '*', gdpsFitX, gdpsFitY)
     title(titleName);

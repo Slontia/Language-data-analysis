@@ -14,7 +14,7 @@ function popFit(yearsX, popsY, titleName)
     
     % draw picture
     popFunc = fittype(funcExpr,'independent','year','dependent','population');
-    popsFit = fit(yearsX, popsY, popFunc, 'Startpoint',startPoint);
+    popsFit = fit(yearsX, popsY, popFunc, 'Startpoint',startPoint)
     clf;
     xlim([1950, 2065]);
     plot(popsFit, 'fit', 0.95);
