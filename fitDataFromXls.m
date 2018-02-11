@@ -1,4 +1,5 @@
 function fitDataFromXls(sheetName, fitHandle)
+    global DRAW_GRAPH;
     global regionList;
     data = xlsread("data.xlsx", sheetName);
     dataSize = size(data, 1);
@@ -10,7 +11,9 @@ function fitDataFromXls(sheetName, fitHandle)
     for regionNo = 2:dataSize
         regionDatas = data(regionNo, :);
         fitLine = fitHandle(years, regionDatas); 
-%         pause(0.3);
+        if DRAW_GRAPH
+            pause(0.3);
+        end
         if (sheetName == "pop")
             regionList{regionNo - 1}.popsFitLine = fitLine;
         elseif (sheetName == "gdp")

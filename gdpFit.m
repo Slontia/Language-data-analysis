@@ -1,10 +1,12 @@
 function gdpsFit = gdpFit(yearsX, gdpsY)
-    global regionList;
+    global DRAW_GRAPH;
     [yearsX, gdpsY] = initForFit(yearsX, gdpsY);
     gdpsFit = polyfit(yearsX, gdpsY, 2);
     
-%     gdpsFitX = 1980:2065;
-%     gdpsFitY = polyval(gdpsFit, gdpsFitX);
-%     clf;
-%     plot(yearsX, gdpsY, '*', gdpsFitX, gdpsFitY)
+    if DRAW_GRAPH
+        gdpsFitX = 1980:2065;
+        gdpsFitY = polyval(gdpsFit, gdpsFitX);
+        clf;
+        plot(yearsX, gdpsY, '*', gdpsFitX, gdpsFitY)
+    end
 end

@@ -1,4 +1,5 @@
 function popsFit = popFit(yearsX, popsY)
+    global DRAW_GRAPH;
     [yearsX, popsY] = initForFit(yearsX, popsY);
     
     % get start point
@@ -15,11 +16,14 @@ function popsFit = popFit(yearsX, popsY)
     % draw picture
     popFunc = fittype(funcExpr,'independent','year','dependent','population');
     popsFit = fit(yearsX, popsY, popFunc, 'Startpoint',startPoint)
-%     clf;
-%     xlim([1950, 2065]);
-%     plot(popsFit, 'fit', 0.95);
-%     hold on,
-%     plot(yearsX, popsY, '*');
+    
+    if DRAW_GRAPH
+        clf;
+        xlim([1950, 2065]);
+        plot(popsFit, 'fit', 0.95);
+        hold on,
+        plot(yearsX, popsY, '*');
+    end
 end
 
 function [x0, r] = malthus(yearsX, popsY)

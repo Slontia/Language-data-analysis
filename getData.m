@@ -1,3 +1,3 @@
-function data = getData(name)
-    data = xlsread("data.xlsx", name);
+function [digitData, textData] = getData(name)
+    [digitData, textData] = xlsread("data.xlsx", name);
 end

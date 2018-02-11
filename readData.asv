@@ -1,6 +1,6 @@
 function readData()
-    readMatData();
     createRegions();
+    readMatData();
 end
 
 function readMatData() % static
@@ -19,16 +19,26 @@ function readMatData() % static
     global relDiffW;
     global eduW;
     
-    langFams = getData("langFam");
+    % part I: relative language difficulty
+    langFamis = getData("fami");
     relDiffMat = zeros(regionNum);
     for reg = 1 : regionNum
-        lang = langFams(reg);
-        famRegs = find();
-        relDiffMat(reg, find(langFams == lang)) = 1;
+        fami = langFamis(reg);
+        famRegs = (langFamis == fami);
+        relDiffMat(reg, famRegs) = 1;
     end
     
+    % part II: education
     eduMat = zeros(regionNum);
-    absCapMat = relDiffMat * relDiffW + eduMat * eduW;
+    [h, w] = find(getData("official")' == 1);
+    eduMat(h, w) = 1;
+    eduMat = eduMat';
+    absCapMat = relDiffMat .* relDiffW + eduMat .* eduW;
+    
+    % same language
+    langs = getData("lang");
+    sameLangMat = ones()
+    
 end
 
 function mat = symMat(mat)
@@ -59,11 +69,12 @@ end
 function initRegions()
     global regionList;
     global regionNum;
-    [digitData, textData] = getData("profile");
-    [regionNum, ~] = size(digitData);
+    [ids, names] = getData("node");
+    langs = getData("lang");
+    [regionNum, ~] = size(ids);
     regionList = cell(1, regionNum);
     for i = 1 : regionNum
-        regionList{i} = Region(digitData, textData(i, 2), textData(i, 1));
+        regionList{i} = Region(ids, names(i, 1), langs(i, 1));
     end
 end
 

@@ -18,13 +18,10 @@ classdef Region
         migrNum;        % migrator number
         econP;          % economy power
         migrP;          % migration power
+        emisP;          % emissive power
         
         lang2Prop;      % the proportion of L2
     end
- 
-    properties (Dependent)
-        emisP;          % emissive power
-    end   
    
     % constuctor
     methods 
@@ -40,21 +37,6 @@ classdef Region
             
         end
         
-        function obj = loadDataByYear(obj)
-            global curYear;
-            obj.econP = getYearGdp(obj, curYear);
-            obj.pop = getYearPop(curYear);
-            obj.migrNum = obj.pop * obj.migrProp;
-        end
-        
-        function obj = calEmisP(obj)
-            obj.emisP = ...
-                obj.econP * econW + ...
-                obj.poliP * poliW + ...
-                obj.absDiff * absDiffW + ...
-                obj.migrP * migrW;
-        end
-        
         function gdp = getYearGdp(obj, year)
             gdp = polyval(obj.gdpsFitLine, year);
         end
@@ -62,24 +44,46 @@ classdef Region
         function pop = getYearPop(obj, year)
            pop = obj.popsFitLine(year);
         end
+        
+        function obj = loadDataByYear(obj)
+            global curYear;
+            obj.econP = obj.getYearGdp(curYear);
+            obj.pop = obj.getYearPop(curYear);
+            obj.migrNum = obj.pop * obj.migrProp;
+        end
+        
+        function obj = calEmisP(obj)
+            global econW;
+            global poliW;
+            global migrW;
+            obj.emisP = ...
+                obj.econP * econW + ...
+                obj.poliP * poliW + ...
+                obj.migrP * migrW;
+        end
     end
     
-    methods
-        function update(regionList)
-            regionNum = size(regionList);
+    methods(Static)
+        function update()
+            global regionList;
+            global regionNum;
             migratorNums = zeros(1, regionNum);
-            
+            gdps = zeros(1, regionNum);
+       
             % update data
             for i = 1:regionNum
-                regionList(i).loadDataByYear(); % ecno & pop & migrNum
-                migratorNums(i) = regionList(i).migrNum; % record migrNum
+                regionList{i} = regionList{i}.loadDataByYear(); % ecno & pop & migrNum
+                migratorNums(1, i) = regionList{i}.migrNum; % record migrNum
+                gdps(1, i) = regionList{i}.econP; % record economy power
             end
             
             % update migrP & cal emisP
-            migrPs = normalize(migratorNums);
+            migrPs = normalize(migratorNums, "upper", Inf);
+            econPs = normalize(gdps, "upper", Inf);
             for i = 1:regionNum
-                regionList(i).migrP = migrPs(i);
-                regionList.calEmisP();
+                regionList{i}.migrP = migrPs(i);
+                regionList{i}.econP = econPs(i);
+                regionList{i} = regionList{i}.calEmisP();
             end
         end
     end

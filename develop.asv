@@ -3,11 +3,10 @@ function develop()
     global capMat;
     global distMat;
     global absCapMat;
-    global sameLangMat;
     global regionList;
     global regionNum;
     capMat = zeros(regionNum, regionNum, 60);
-    for curYear = 2015 : 2065
+    for curYear = 2015 : 2016
         Region.update();
         emisPMat = zeros(regionNum);
         for i = 1 : regionNum
@@ -16,7 +15,7 @@ function develop()
 %         emisPMat
 %         distMat
 %         absCapMat
-        capMat(:, :, curYear-2014) = (emisPMat + distMat + absCapMat) .* sameLangMat;
+        capMat(:, :, curYear-2014) = emisPMat + distMat + absCapMat;
         fprintf("%d\n", curYear-2015);
     end
 end
