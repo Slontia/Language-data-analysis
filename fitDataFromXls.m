@@ -1,4 +1,5 @@
 function fitDataFromXls(sheetName, fitHandle)
+    global regionList;
     data = xlsread("data.xlsx", sheetName);
     dataSize = size(data, 1);
 
@@ -8,7 +9,12 @@ function fitDataFromXls(sheetName, fitHandle)
     % load year axis
     for regionNo = 2:dataSize
         regionDatas = data(regionNo, :);
-        fitHandle(years, regionDatas, regionNo); 
-        pause(0.3);
+        fitLine = fitHandle(years, regionDatas); 
+%         pause(0.3);
+        if (sheetName == "pop")
+            regionList{regionNo - 1}.popsFitLine = fitLine;
+        elseif (sheetName == "gdp")
+            regionList{regionNo - 1}.gdpsFitLine = fitLine;
+        end
     end
 end

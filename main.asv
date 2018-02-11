@@ -1,0 +1,73 @@
+regionNum = 40;
+lang2Mat = zeros(regionNum);
+
+% Matrixs
+global capMat;
+global absCapMat;
+global distMat;
+capMat = zeros(regionNum);        % C
+absCapMat = zeros(regionNum);     % AC
+distMat = zeros(regionNum);       % D
+
+% Weights
+global econW;
+global poliW;
+global absDiffW;
+global migrW;
+global distW;
+global relDiffW;
+global eduW;
+econW = 0.1;      % economy weight
+poliW = 0.1;      % politics weight
+absDiffW = 0.1;   % absolute language difficulty weight
+migrW = 0.1;      % migration weight
+distW = 0.1;      % region distance weight
+relDiffW = 0.1;   % relative language difficulty weight
+eduW = 0.1;       % language education weight
+
+% Other
+global curYear;
+curYear = 2015;
+global regionList;
+regionList = zeros(1, regionNum);
+
+
+function readMat() % static
+    global distMat;
+    global distW;
+    % [ read distMat ]
+
+    distMat = distMat .* distW;
+    
+    global absCapMat;
+    global relDiffW;
+    global eduW;
+    % [ read relDiffMat & eduMat ]
+    
+    absCapMat = relDiffMat * relDiffW + eduMat * eduW;
+end
+
+function readRegionData()
+
+end
+
+function regionList = createRegions(regionList)
+    initRegions(regionList);
+    fitData();
+end
+
+function fitData()
+    fitDataFromXls("gdp", @gdpFit);
+    fitDataFromXls("pop", @popFit);
+    fprintf('over\n');
+end
+
+function regionList = initRegions(regionList)
+    % [ read profile ]
+    
+end
+
+function regionList = readStaticData(regionList)
+    % [ read static data ]
+
+end

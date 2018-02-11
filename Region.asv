@@ -42,8 +42,8 @@ classdef Region
         
         function obj = loadDataByYear(obj)
             global curYear;
-            obj.econP = getYearGdp(obj, curYear);
-            obj.pop = getYearPop(curYear);
+            obj.econP = polyval(obj.gdpsFitLine, curYear);
+            obj.pop = obj.popsFitLine(curYear);
             obj.migrNum = obj.pop * obj.migrProp;
         end
         
@@ -55,13 +55,7 @@ classdef Region
                 obj.migrP * migrW;
         end
         
-        function gdp = getYearGdp(obj, year)
-            gdp = polyval(obj.gdpsFitLine, year);
-        end
-        
-        function pop = getYearPop(obj, year)
-           pop = obj.popsFitLine(year);
-        end
+        function pop = getYearPop(year)
     end
     
     methods
