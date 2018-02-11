@@ -1,5 +1,9 @@
 global DRAW_GRAPH;
 DRAW_GRAPH = 0;
+global FUTURE_YEAR;
+FUTURE_YEAR = 70;
+global BASE_YEAR;
+BASE_YEAR = 2000;
 
 regionNum = 40;
 lang2Mat = zeros(regionNum);
@@ -20,6 +24,7 @@ eduW = 0.1067;       % language education weight
 
 readData();
 develop();
+analyze();
 
 
 
