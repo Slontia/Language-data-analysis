@@ -12,8 +12,8 @@ function develop()
     for curYear = BASE_YEAR : BASE_YEAR+FUTURE_YEAR-1
         Region.update();
         emisPMat = zeros(regionNum);
-        for i = 1 : regionNum
-            emisPMat(i, :) = regionList{i}.emisP;
+        for j = 1 : regionNum
+            emisPMat(:, j) = regionList{j}.emisP;
         end
 %         emisPMat
 %         distMat
