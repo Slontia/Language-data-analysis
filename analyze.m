@@ -63,7 +63,7 @@ function calLangTotalPop(mode)
     for year = 1 : FUTURE_YEAR
         lang2PopMat(year, :) = lang2Pops(1, :, year); 
     end
-    rankMat = getRank(lang2PopMat, 10);
+    rankMat = getRank(lang2PopMat, 20);
     rankMat(11, :)'
     xlswrite('output.xls', rankMat, "popRank");
 end
