@@ -1,8 +1,26 @@
 function fitWeight()
     variExpr();
-    options = optimset('TolX',1)
-    result = fsolve(@vari, [0.1;0.4;0.6;0.5;0.3;2], options)
-    result = sumNormal(abs(result), 1)
+    options = optimset('TolX',0.1);
+    init = initValue();
+    result = fsolve(@vari, init, options);
+    [weightRes, propRes] = resultValue(result);
+    writeData(weightRes, "weight");
+    writeData(propRes, "prop");
+end
+
+function init = initValue()
+    global regionNum;
+    init = ones(6 + regionNum, 1);
+    init(1:6, 1) = rand(6, 1);
+    init(7:6+regionNum, 1) = rand(regionNum, 1);
+end
+
+function [weightRes, propRes] = resultValue(result)
+    global regionNum;
+    weightRes = result(1:6, 1);
+    propRes = result(7:6+regionNum, 1);
+    weightRes = sumNormal(abs(weightRes), 1);
+    propRes = map(propRes, "map");
 end
 
 function result = vari(paras)
@@ -26,7 +44,7 @@ function variExpr()
         emisPMat(:, j) = regionList{j}.emisP;
     end
     capMatT = (emisPMat + distMat + absCapMat) .* sameLangMat;
-    
+    %capMatT = getRankMat(capMatT, "ascend"); % try
     capMatT = normalCapMat(capMatT);
     langCapMatT = combineToLangCapMat(capMatT);
     [lang2PopsT, lang2PopsAct] = calLangTotalPop(langCapMatT);
@@ -42,15 +60,17 @@ end
 
 
 function mat = setValue(mat, paras)
-    paras = abs(paras);
-    paras = sumNormal(paras, 1);
+    global regionNum;
+    [weightRes, propRes] = resultValue(paras);
     syms econW poliW migrW distW relDiffW eduW
-    mat = subs(mat, econW, paras(1));
-    mat = subs(mat, poliW, paras(2));
-    mat = subs(mat, migrW, paras(3));
-    mat = subs(mat, distW, paras(4));
-    mat = subs(mat, relDiffW, paras(5));
-    mat = subs(mat, eduW, paras(6));
+    prop = sym("prop", [regionNum, 1]);
+    mat = subs(mat, econW, weightRes(1));
+    mat = subs(mat, poliW, weightRes(2));
+    mat = subs(mat, migrW, weightRes(3));
+    mat = subs(mat, distW, weightRes(4));
+    mat = subs(mat, relDiffW, weightRes(5));
+    mat = subs(mat, eduW, weightRes(6));
+    mat = subs(mat, prop, propRes);
     mat = double(mat);
 end
 
@@ -87,9 +107,9 @@ function [lang2PopsT, lang2PopsAct] = calLangTotalPop(langCapMatT)
         popBasesT(lang, 1) = regionList{lang}.getYearPop(2010);
     end
     popBasesT = repmat(popBasesT, 1, langNum);
-    %sym (lang2PopsT, [regionNum, 1]);
-    %lang2RegPopsT = popBasesT .* langCapMat(:, :, :) .* (atan(lang2PopsT) / pi + 0.5);
-    lang2RegPopsT = popBasesT .* langCapMatT(:, :) .* 0.5;
+    prop = sym("prop", [regionNum, 1]);
+    lang2RegPopsT = popBasesT .* langCapMatT(:, :) .* (atan(prop) / pi + 0.5);
+    %lang2RegPopsT = popBasesT .* langCapMatT(:, :) .* 0.5;
     lang2PopsT = sum(lang2RegPopsT, 1);
     lang2PopsT = lang2PopsT';
     lang2PopsAct = xlsread("lang2prop.xlsx", "solve");

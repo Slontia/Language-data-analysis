@@ -9,6 +9,10 @@ end
 
 function normalCapMat()
     global capMat;
+%     global FUTURE_YEAR;
+%     for y = 1 : FUTURE_YEAR
+%         capMat(:,:,y) = getRankMat(capMat(:,:,y), 'ascend'); % try
+%     end
     capMat = sumNormal(capMat, 2);
 end
 
@@ -43,6 +47,10 @@ function calLangTotalPop(mode)
     global langNum;
     global langCapMat;
     global lang2Props;
+    global lang2PopMat;
+    global lang2RankMat;
+    global lang2RegPops;
+    global rankMat;
     % mul pop & cap
     popBases = zeros(regionNum, 1);
     for lang = 1 : regionNum
@@ -57,17 +65,24 @@ function calLangTotalPop(mode)
     popBases = repmat(popBases, 1, langNum);
     % lang2Props = repmat(lang2Props, 1, langNum);
     % lang2RegPops = popBases .* langCapMat(:, :, :) .* lang2Props;
-    lang2RegPops = popBases .* langCapMat(:, :, :) .* 0.5;
+    if mode == -1
+        fprintf("======== prop ========\n");
+        lang2Props = getData("prop")
+    else
+        lang2Props = 0.5; 
+    end
+    lang2RegPops = popBases .* langCapMat(:, :, :) .* lang2Props;
     lang2Pops = sum(lang2RegPops, 1);
     lang2PopMat = zeros(FUTURE_YEAR, langNum);
     for year = 1 : FUTURE_YEAR
         lang2PopMat(year, :) = lang2Pops(1, :, year); 
     end
-    rankMat = getRank(lang2PopMat, 20);
+    lang2RankMat = getRankMat(lang2PopMat, 'descend');
+    rankMat = getRank(lang2PopMat, langNum);
     rankMat(11, :)'
-    xlswrite('output.xls', rankMat, "popRank");
+    
+    xlswrite('output.xls', rankMat, 'popRank');
 end
-
 
 function rankMat = getRank(mat, rankSize)
     [h ,~] = size(mat);
@@ -117,9 +132,9 @@ function calLang2Prop()
     
     paraMat = paraMat';
     solveVec = solveVec';
-    vari = @(x) sum((paraMat * (atan(x) / pi + 0.5) - solveVec) .^ 2);
+    vari = @(x) sum((paraMat * (map(x, "map")) - solveVec) .^ 2);
     lang2Props = fsolve(vari, zeros(regionNum, 1));
-    lang2Props = tan(pi * (lang2Props - 0.5));
+    lang2Props = map(lang2Props, "map");
     
 end
 

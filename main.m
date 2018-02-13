@@ -1,4 +1,5 @@
-% dbstop if error
+%clear all,
+dbstop if error
 
 global DRAW_GRAPH;
 DRAW_GRAPH = 0;
@@ -20,7 +21,17 @@ global distW;
 global relDiffW;
 global eduW;
 
-if MODE == 0
+if MODE == -1
+    fprintf("====== weights ======\n");
+    weights = getData("weight")
+    econW = weights(1, 1);      % economy weight
+    poliW = weights(2, 1);      % politics weight
+    migrW = weights(3, 1);      % migration weight
+    distW = weights(4, 1);      % region distance weight
+    relDiffW = weights(5, 1);   % relative language difficulty weight
+    eduW = weights(6, 1);       % language education weight    
+    
+elseif MODE == 0
     syms econW poliW migrW distW relDiffW eduW;
 elseif MODE == 1
     econW = 0.5057;      % economy weight
@@ -30,19 +41,19 @@ elseif MODE == 1
     relDiffW = 0.0656;   % relative language difficulty weight
     eduW = 0.1067;       % language education weight
 elseif MODE == 2
-    econW = 0.5490;      % economy weight
-    poliW = 0.2360;      % politics weight
+    econW = 0.3358;      % economy weight
+    poliW = 0.1865;      % politics weight
     migrW = 0;      % migration weight
-    distW = 0.0441;      % region distance weight
-    relDiffW = 0.0680;   % relative language difficulty weight
-    eduW = 0.1030;       % language education weight
+    distW = 0.0523;      % region distance weight
+    relDiffW = 0.0554;   % relative language difficulty weight
+    eduW = 0.3076;       % language education weight
 else
-    econW = 0.3314;      % economy weight
-    poliW = 0.2249;      % politics weight
-    migrW = 0.0746;           % migration weight
-    distW = 0.0480;      % region distance weight
-    relDiffW = 0.0556;   % relative language difficulty weight
-    eduW = 0.2655;       % language education weight    
+    econW = 0.3358;      % economy weight
+    poliW = 0.1865;      % politics weight
+    migrW = 0.0623;      % migration weight
+    distW = 0.0523;      % region distance weight
+    relDiffW = 0.0554;   % relative language difficulty weight
+    eduW = 0.3076;       % language education weight    
 end
 
 readData();
@@ -51,6 +62,7 @@ if (MODE == 0)
 else
     develop();
     analyze();
+    outputResult();
 end
 
 
